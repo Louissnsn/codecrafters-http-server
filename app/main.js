@@ -9,11 +9,12 @@ const server = net.createServer((socket) => {
     socket.end();
   });
   socket.on("data", (data) => {
-    console.log(data.toString());
+    console.log("data", data);
     const path = data.toString().split(" ")[1];
-    const responseStatus = path === "/" ? "200 OK" : "404 Not Found";
-    socket.write(`HTTP/1.1 ${responseStatus}\r\n`);
+    const responseStatus = path === "/index.html" ? "200 OK" : "404 NOT Found";
+    socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n`);
   });
 });
 
 server.listen(4221, "localhost");
+
