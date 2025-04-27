@@ -13,6 +13,7 @@ const server = net.createServer((socket) => {
   // À chaque connexion, on écoute l'événement "data"
   socket.on("data", (data) => {
     const lines = data.toString().split("\r\n"); // On découpe la requête en lignes
+    const method = lines[0].split(" ")[0]; // On récupère la méthode HTTP (GET, POST, etc.)
     const requestPath = data.toString().split(" ")[1]; // On récupère seulement le chemin demandé (ex: /files/hello.txt)
 
     // Si la requête est pour la racine "/"
@@ -38,8 +39,8 @@ const server = net.createServer((socket) => {
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`
       );
 
-      // Si la requête est de type /files/{filename}
-    } else if (requestPath.startsWith("/files/")) {
+      // Si la requête est de type GET /files/{filename}
+    } else if (method === "GET" && requestPath.startsWith("/files/")) {
       // Extraire le nom du fichier demandé
       const fileName = requestPath.slice("/files/".length);
       // Construire le chemin complet vers le fichier
@@ -61,9 +62,27 @@ const server = net.createServer((socket) => {
           socket.end();
         }
       });
+    } else if (method === "POST" && requestPath.startsWith("/files/")) {
+      // Extraire le nom du fichier demandé
+      const fileName = requestPath.slice("/files/".length);
+      // Construire le chemin complet vers le fichier
+      const filePath = path.join(directory, fileName);
 
-      // Si la route demandée n'est pas reconnue
-    } else {
+      const emptyLineIndex = lines.indexOf(""); // Trouver l'index de la ligne vide
+      const requestBody = lines.slice(emptyLineIndex + 1).join("\r\n"); // Récupérer le corps de la requête après la ligne vide
+
+      // Écrire le contenu dans le fichier
+      fs.writeFile(filePath, requestBody, (err) => {
+        if (err) {
+          socket.write("HTTP/1.1 500 Internal Server Error\r\n\r\n");
+        } else {
+          socket.write("HTTP/1.1 201 Created\r\n\r\n");
+        }
+        socket.end();
+      });
+    }
+    // Si la requête n'est pas reconnue
+    else {
       socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
     }
   });
