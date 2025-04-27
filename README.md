@@ -1,38 +1,44 @@
-[![progress-banner](https://backend.codecrafters.io/progress/http-server/e0a4a919-8940-4fec-aa0b-a4b0862456ef)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Serveur HTTP - Challenge Codecrafters (Node.js)
 
-This is a starting point for JavaScript solutions to the
-["Build Your Own HTTP server" Challenge](https://app.codecrafters.io/courses/http-server/overview).
+Ce projet est mon implémentation d'un serveur HTTP minimaliste développé entièrement avec Node.js, dans le cadre du [challenge Codecrafters](https://codecrafters.io).
 
-[HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) is the
-protocol that powers the web. In this challenge, you'll build a HTTP/1.1 server
-that is capable of serving multiple clients.
+Le but était de construire un serveur capable de gérer des connexions TCP, parser manuellement des requêtes HTTP, et répondre correctement selon les différentes routes demandées.
 
-Along the way you'll learn about TCP servers,
-[HTTP request syntax](https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html),
-and more.
+---
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+## 🚀 Fonctionnalités
 
-# Passing the first stage
+- Gestion de plusieurs connexions TCP simultanées
+- Parsing manuel des requêtes HTTP (méthode, chemin, headers, body)
+- Prise en charge des routes suivantes :
+  - `GET /` → Retourne 200 OK
+  - `GET /echo/:message` → Répète le message envoyé dans l'URL
+  - `GET /user-agent` → Retourne l'`User-Agent` du client
+  - `GET /files/:filename` → Sert un fichier depuis un dossier donné
+  - `POST /files/:filename` → Enregistre le contenu envoyé dans un fichier
+- Retour des bons codes HTTP (`200`, `201`, `404`, `500`)
+- Gestion correcte des en-têtes `Content-Type` et `Content-Length`
+- Aucun framework HTTP externe utilisé (pur Node.js)
 
-The entry point for your HTTP server implementation is in `app/main.js`. Study
-and uncomment the relevant code, and push your changes to pass the first stage:
+---
 
-```sh
-git add .
-git commit -m "pass 1st stage" # any msg
-git push origin master
-```
+## 🛠 Comment l'exécuter
 
-Time to move on to the next stage!
+1. Cloner ce dépôt :
+   ```bash
+   git clone https://github.com/Louissnsn/codecrafters-http-server.git
+   cd codecrafters-http-server
+   ```
+2. Lancer le serveur en spécifiant un dossier de travail :
+   ```bash
+   node app.js --directory /chemin/vers/votre/dossier
+   ```
 
-# Stage 2 & beyond
+🧠 Ce que j'ai appris :
 
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `node (21)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.js`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+- Gestion des serveurs TCP bas niveau avec Node.js (net module)
+- Compréhension fine du protocole HTTP
+- Parsing manuel des requêtes HTTP sans librairie
+- Manipulation du système de fichiers avec Node.js (fs module)
+- Bonne pratique pour la gestion des routes et des statuts HTTP
+- Structuration d'un projet minimaliste et maintenable
